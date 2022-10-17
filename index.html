@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <title>sight words for kids</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/pico.min.css">
+  <style>
+    @font-face {
+      font-family: 'Andika';
+      src: url('./fonts/Andika-Bold.woff2') format('woff2');
+    }
+
+    body {
+      font-family: 'Andika';
+    }
+
+    h1 {
+      font-family: 'Andika';
+    }
+
+    .refresh {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+    }
+
+    .glow {
+      color: #fff;
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+
+    @-webkit-keyframes glow {
+      from {
+        text-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #e60073, 0 0 4px #e60073, 0 0 5px #e60073, 0 0 6px #e60073, 0 0 7px #e60073;
+      }
+
+      to {
+        text-shadow: 0 0 2px #fff, 0 0 3px #ff4da6, 0 0 4px #ff4da6, 0 0 5px #ff4da6, 0 0 6px #ff4da6, 0 0 7px #ff4da6, 0 0 8px #ff4da6;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+
+
+
+
+
+  <main class="container" style="max-width: 70%;">
+    <nav>
+      <ul>
+        <li><strong>Learn with me!</strong></li>
+      </ul>
+      <ul>
+        <!-- <li><a href="#">Aa Bb Cc</a></li>
+      <li><a href="#">1 2 3</a></li> -->
+        <li>
+          <details role="list" id="detail">
+            <summary>topic</summary>
+            <ul>
+              <li><a href="#" onclick="lesson(sightList)" role="button">Words</a></li>
+              <li><a href="#" onclick="lesson(letterList)" role="button">Letters</a></li>
+              <li><a href="#" onclick="lesson(numberList)" role="button">Numbers</a></li>
+            </ul>
+          </details>
+
+        </li>
+      </ul>
+    </nav>
+    <article>
+      <h1 id="theWord" style="text-align: center; margin: auto;"></h1>
+      <div style="width: 90%; text-align: right;">
+        <a href="#" role="button" class="outline" onclick="playAudio()"><img src="./images/play.svg" alt="play" /></a>
+        <audio id="myAudio">
+      </div>
+      </audio>
+
+    </article>
+  </main>
+
+
+  <span class="refresh">
+    <a href="#" role="button" class="outline" onClick='nextWord()'><img src="./images/skip-forward.svg"
+        alt="next" /></a>
+  </span>
+
+  <script>
+    let sightList = [
+      'all',
+      'am',
+      'are',
+      'at',
+      'ate',
+      'be',
+      'black',
+      'brown',
+      'but',
+      'came',
+      'did',
+      'do',
+      'eat',
+      'four',
+      'get',
+      'good',
+      'have',
+      'he',
+      'into',
+      'like',
+      'must',
+      'new',
+      'no',
+      'now',
+      'on',
+      'our',
+      'out',
+      'please',
+      'pretty',
+      'ran',
+      'ride',
+      'saw',
+      'say',
+      'she',
+      'so',
+      'soon',
+      'that',
+      'there',
+      'they',
+      'this',
+      'too',
+      'under',
+      'want',
+      'was',
+      'well',
+      'went',
+      'what',
+      'white',
+      'who',
+      'will',
+      'with',
+      'yes',
+    ];
+
+    let letterList = [
+      'A a',
+      'B b',
+      'C c',
+      'D d',
+      'E e',
+      'F f',
+      'G g',
+      'H h',
+      'I i',
+      'J j',
+      'K k',
+      'L l',
+      'M m',
+      'N n',
+      'O o',
+      'P p',
+      'Q q',
+      'R r',
+      'S s',
+      'T t',
+      'U u',
+      'V v',
+      'W w',
+      'X x',
+      'Y y',
+      'Z z',
+      'CONGRATULATIONS'
+    ]
+
+    let numberList = [
+      'One',
+      'Two',
+      'Three',
+      'Four',
+      'Five',
+      'Six',
+      'Seven',
+      'Eight',
+      'Nine',
+      'Ten',
+      'CONGRATULATIONS'
+    ]
+
+    let tensList = [
+      '10',
+      '20',
+      '30',
+      '40',
+      '50',
+      '60',
+      '70',
+      '80',
+      '90',
+      '100',
+    ]
+
+    let shapeList = [
+      'circle',
+      'oval',
+      'triangle',
+      'square',
+      'rectangle',
+      'diamond',
+      'star',
+      'heart',
+      'plus',
+      'minus',
+    ]
+
+    let colorList = [
+      'black',
+      'white',
+      'brown',
+      'blue',
+      'yellow',
+      'red',
+      'purple',
+      'green',
+      'orange',
+    ]
+
+    let lessonTodo = shuffle(sightList);
+    let init = "true";
+    console.log(true)
+    function lesson(lessonTodo2) {
+      if (init == 'true') {
+        init = 'false';
+        console.log('yes');
+        lessonTodo = sightList;
+      } else {
+        console.log('no');
+        i = 0;
+        lessonTodo = lessonTodo2
+      }
+      console.log(lessonTodo);
+      nextWord();
+      document.getElementById("detail").open = false;
+      return lessonTodo;
+
+    }
+
+
+    function shuffle(array) {
+      let currentIndex = array.length, randomIndex;
+      // While there remain elements to shuffle.
+      while (currentIndex != 0) {
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    let i = 0
+    var voice = document.getElementById("myAudio");
+
+    let theWord = shuffle(lessonTodo);
+    theNewWord = theWord[i];
+    document.getElementById("theWord").innerText = theNewWord;
+    document.getElementById("myAudio").innerHTML = '<source src="./audio/' + theNewWord + '.mp3" type="audio/mpeg">';
+    lessonTodo = lesson(lessonTodo);
+    function nextWord() {
+      if (i  >= lessonTodo.length) {
+        i = 0;
+        console.log("reset");
+        theWord = shuffle(theWord);
+        theNewWord = lessonTodo[i];
+      } else {
+        theNewWord = lessonTodo[i];
+      }
+
+      if (init == 'false') {
+        init = 'stage'
+        console.log('###yes');
+      } else if (init = 'stage') {
+        console.log('###no');
+
+      } else {
+        i = 0;
+      }
+
+      theNewWord = lessonTodo[i];
+      document.getElementById("theWord").className = "none";
+
+      document.getElementById("theWord").innerText = theNewWord;
+      document.getElementById("myAudio").innerHTML = "<source src='./audio/" + theNewWord + ".mp3' type='audio/mpeg'>";
+      console.log(theNewWord);
+      i = i + 1;
+      return (i);
+    }
+
+    function playAudio() {
+      document.getElementById("theWord").className = 'glow'
+      voice.load();
+      voice.play();
+    }
+
+    function pauseAudio() {
+      voice.pause();
+    } 
+  </script>
+
+</body>
+
+</html>
