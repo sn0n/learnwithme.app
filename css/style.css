@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Andika';
+    src: url('../fonts/Andika-Bold.woff2') format('woff2');
+  }
+
+  body {
+    font-family: 'Andika';
+    padding: 42px;
+  }
+
+  h1 {
+    font-family: 'Andika';
+  }
+
+  .refresh {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+  }
+
+  .glow {
+    color: #fff;
+    text-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #e60073, 0 0 4px #e60073, 0 0 5px #e60073, 0 0 6px #e60073, 0 0 7px #e60073;
+  }
