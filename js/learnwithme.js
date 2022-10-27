@@ -1,3 +1,4 @@
+
 let previous = "hello, lets get started";
 let domPrevious = document.getElementById("thePrevious");
 let domtheWord = document.getElementById("theWord");
@@ -8,16 +9,9 @@ let init = "true";
 let i = 0
 let theWord = shuffle(lessonTodo);
 
-let theNewWord = theWord[i];
+theNewWord = theWord[i];
 voiceBox.innerHTML = '<source src="./audio/' + theNewWord + '.mp3" type="audio/mpeg">';
 lessonTodo = lesson(lessonTodo);
-
-function  addPrevious(){
-    var temp = document.getElementsByTagName("template")[0];
-    var clon = temp.content.cloneNode(true);
-    domPrevious.innerHTML = theNewWord;
-    document.getElementById("thePrevious").insertBefore(clon, "learnwithmeMain".firstChild);
-}
 
 function nextWord(prev) {
 
@@ -37,12 +31,13 @@ function nextWord(prev) {
     domPrevious.innerHTML = `${previous}`
     domtheWord.innerHTML = `${theNewWord}`;
     voiceBox.innerHTML = "<source src='./audio/" + theNewWord + ".mp3' type='audio/mpeg'>";
-    addPrevious()
     i = i + 1;
     return (i);
 }
 
 function lesson(lessonTodo2) {
+    if (!lessonTodo[i - 1]) { } else { previous = `<small>something new then...</small>` };
+
     if (init == 'true') {
         init = 'false';
         lessonTodo = sightList;
@@ -77,31 +72,4 @@ function playAudio() {
 
 function pauseAudio() {
     voiceBox.pause();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} 
