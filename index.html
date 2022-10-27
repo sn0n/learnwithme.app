@@ -7,13 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/pico.min.css">
   <link rel="stylesheet" href="css/style.css">
-
+  <script src="./js/lists.js"></script>
+  <script src="./js/learnwithme.js" defer></script>
 </head>
 
 <body>
-
-
-
   <nav>
     <ul>
       <li>Learn with me!</li>
@@ -35,7 +33,7 @@
   </nav>
 
 
-  <main class="container" style="max-width: 70%;">
+  <main class="container" style="max-width: 70%;" id="learnwithmeMain">
     <a  class="secondary" style="text-decoration: none;"><small id="thePrevious">&nbsp;</small></a>
     <article>
       <h1 id="theWord" style="text-align: center; margin: auto;" onclick="playAudio()"></h1>
@@ -52,215 +50,11 @@
         alt="next" /></a>
   </span>
 
-  <script>
-    let sightList = [
-      'all',
-      'am',
-      'are',
-      'at',
-      'ate',
-      'be',
-      'black',
-      'brown',
-      'but',
-      'came',
-      'did',
-      'do',
-      'eat',
-      'get',
-      'good',
-      'have',
-      'he',
-      'into',
-      'like',
-      'must',
-      'new',
-      'no',
-      'now',
-      'on',
-      'our',
-      'out',
-      'please',
-      'pretty',
-      'ran',
-      'ride',
-      'saw',
-      'say',
-      'she',
-      'so',
-      'soon',
-      'that',
-      'there',
-      'they',
-      'this',
-      'too',
-      'under',
-      'want',
-      'was',
-      'well',
-      'went',
-      'what',
-      'white',
-      'who',
-      'will',
-      'with',
-      'yes',
-    ];
+ 
+  <template>
+    <h1>Flower Power!</h1>
+  </template>
 
-    let letterList = [
-      'Aa',
-      'Bb',
-      'Cc',
-      'Dd',
-      'Ee',
-      'Ff',
-      'Gg',
-      'Hh',
-      'Ii',
-      'Jj',
-      'Kk',
-      'Ll',
-      'Mm',
-      'Nn',
-      'Oo',
-      'Pp',
-      'Qq',
-      'Rr',
-      'Ss',
-      'Tt',
-      'Uu',
-      'Vv',
-      'Ww',
-      'Xx',
-      'Yy',
-      'Zz',
-      'CONGRATULATIONS'
-    ]
-
-    let numberList = [
-      'One',
-      'Two',
-      'Three',
-      'Four',
-      'Five',
-      'Six',
-      'Seven',
-      'Eight',
-      'Nine',
-      'Ten',
-      'CONGRATULATIONS'
-    ]
-
-    let tensList = [
-      '10',
-      '20',
-      '30',
-      '40',
-      '50',
-      '60',
-      '70',
-      '80',
-      '90',
-      '100',
-    ]
-
-    let shapeList = [
-      'circle',
-      'oval',
-      'triangle',
-      'square',
-      'rectangle',
-      'diamond',
-      'star',
-      'heart',
-      'plus',
-      'minus',
-    ]
-
-    let colorList = [
-      'black',
-      'white',
-      'brown',
-      'blue',
-      'yellow',
-      'red',
-      'purple',
-      'green',
-      'orange',
-    ]
-    let previous = "hello, lets get started";
-    let domPrevious = document.getElementById("thePrevious");
-    let domtheWord = document.getElementById("theWord");
-    let domDetail = document.getElementById("detail");
-    let voiceBox = document.getElementById("voiceBox");
-    let lessonTodo = shuffle(sightList);
-    let init = "true";
-    let i = 0
-    let theWord = shuffle(lessonTodo);
-
-    theNewWord = theWord[i];
-    voiceBox.innerHTML = '<source src="./audio/' + theNewWord + '.mp3" type="audio/mpeg">';
-    lessonTodo = lesson(lessonTodo);
-
-    function nextWord(prev) {
-
-      if (i >= lessonTodo.length) {
-        i = 0;
-        theWord = shuffle(theWord);
-        theNewWord = lessonTodo[i];
-      }  else if(prev) {
-        console.log('he clicked back');
-        theNewWord = lessonTodo[i - 1];
-      } else {
-        theNewWord = lessonTodo[i];
-      }
-
-      domtheWord.className = "none";
-      if (!lessonTodo[i - 1]) { } else { previous = `<small>previous: ${lessonTodo[i - 1]}</small>` };
-      domPrevious.innerHTML = `${previous}`
-      domtheWord.innerHTML = `${theNewWord}`;
-      voiceBox.innerHTML = "<source src='./audio/" + theNewWord + ".mp3' type='audio/mpeg'>";
-      i = i + 1;
-      return (i);
-    }
-
-    function lesson(lessonTodo2) {
-      if (init == 'true') {
-        init = 'false';
-        lessonTodo = sightList;
-      } else {
-        i = 0;
-        lessonTodo = lessonTodo2
-      }
-      nextWord();
-      domDetail.open = false;
-      return lessonTodo;
-    }
-
-    function shuffle(array) {
-      let currentIndex = array.length, randomIndex;
-      // While there remain elements to shuffle.
-      while (currentIndex != 0) {
-        // Pick a remaining element.
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-          array[randomIndex], array[currentIndex]];
-      }
-      return array;
-    }
-
-    function playAudio() {
-      domtheWord.className = 'glow'
-      voiceBox.load();
-      voiceBox.play();
-    }
-
-    function pauseAudio() {
-      voiceBox.pause();
-    } 
-  </script>
 
 </body>
 
