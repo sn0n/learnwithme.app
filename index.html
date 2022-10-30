@@ -34,21 +34,24 @@
 
 
   <main class="container" style="max-width: 70%;" id="learnwithmeMain">
-    <a  class="secondary" style="text-decoration: none;"><small id="thePrevious">&nbsp;</small></a>
+    <span style="text-decoration: none;"><small id="thePrevious">&nbsp;</small></span>
     <article>
       <h1 id="theWord" style="text-align: center; margin: auto;" onclick="playAudio()"></h1>
       <div style="width: 90%; text-align: right;">
-        <a href="#" role="button" class="outline" onclick="playAudio()"><img src="./images/play.svg" alt="play" /></a>
+        <span role="button" class="outline" onclick="playAudio()"><img src="./images/play.svg" alt="play" /></span>
         <audio id="voiceBox"></audio>
       </div>
     </article>
+
+
+    <div class="refresh" style="width: 100%; text-align: right;">
+      <span role="button" class="outline" onClick='nextWord()'><img src="./images/skip-forward.svg"
+          alt="next" /></span>
+      </div>
+
   </main>
 
 
-  <span class="refresh">
-    <a href="#" role="button" class="outline" onClick='nextWord()'><img src="./images/skip-forward.svg"
-        alt="next" /></a>
-  </span>
 
  
   <template>
