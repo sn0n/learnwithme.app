@@ -1,5 +1,5 @@
 
-let previous = "Hi, I'm snahn, would you like to Learn with me? lets get going!";
+let previous = "Hi, I'm snahn, would you like to Learn with me? Lets get going!";
 let domPrevious = document.getElementById("thePrevious");
 let domtheWord = document.getElementById("theWord");
 let domDetail = document.getElementById("detail");
