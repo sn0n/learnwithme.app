@@ -33,7 +33,7 @@
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col items-center justify-start min-h-screen p-4">
 
     <!-- Header with Mode Selection -->
-    <header class="w-full max-w-2xl mb-6">
+    <header class="w-full max-w-4xl mb-6">
         <div class="grid grid-cols-3 gap-2 md:gap-4">
             <button id="lettersBtn" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 md:py-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-sky-300 transition-all duration-200 ease-in-out">Abc</button>
             <button id="numbersBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 md:py-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 transition-all duration-200 ease-in-out">123</button>
@@ -42,15 +42,17 @@
     </header>
 
     <!-- Main Learning Interface -->
-    <div class="w-full max-w-2xl text-center">
+    <div class="w-full max-w-4xl text-center">
         <!-- Main display area for the word/number/letter -->
-        <div id="display-container" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-16 mb-8 flex items-center justify-center" style="min-height: 250px;">
-            <h1 id="display" class="text-5xl md:text-8xl font-black tracking-wider text-gray-700 dark:text-gray-300">Select a category</h1>
+        <div id="display-container" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 md:p-8 flex items-center justify-around" style="min-height: 250px;">
+            <h1 id="prevDisplay" class="w-1/4 text-4xl md:text-6xl font-bold tracking-wider text-gray-300 dark:text-gray-600"></h1>
+            <h1 id="display" class="w-1/2 text-5xl md:text-8xl font-black tracking-wider text-gray-700 dark:text-gray-300">Select a category</h1>
+            <h1 id="nextDisplay" class="w-1/4 text-4xl md:text-6xl font-bold tracking-wider text-gray-300 dark:text-gray-600"></h1>
         </div>
 
-        <!-- Control button -->
-        <div class="flex justify-center">
-            <button id="nextButton" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 rounded-xl text-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-all duration-200 ease-in-out invisible">
+        <!-- Control button container -->
+        <div class="mt-6 flex justify-end">
+             <button id="nextButton" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 rounded-xl text-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-all duration-200 ease-in-out invisible">
                 Next
             </button>
         </div>
@@ -60,6 +62,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             // --- UI ELEMENTS ---
             const display = document.getElementById('display');
+            const prevDisplay = document.getElementById('prevDisplay');
+            const nextDisplay = document.getElementById('nextDisplay');
             const displayContainer = document.getElementById('display-container');
             const nextButton = document.getElementById('nextButton');
             const lettersBtn = document.getElementById('lettersBtn');
@@ -93,7 +97,6 @@
 
             // --- FUNCTIONS ---
 
-            // Fisher-Yates shuffle algorithm for randomizing sight words
             function shuffle(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -101,11 +104,6 @@
                 }
             }
             
-            /**
-             * Speaks the given text using the browser's Speech Synthesis API
-             * and handles the highlighting effect.
-             * @param {string} text - The text to be spoken.
-             */
             function speakAndHighlight(text) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -121,25 +119,20 @@
                 window.speechSynthesis.speak(utterance);
             }
 
-            /**
-             * Moves to the next item in the list, updates the display, and speaks it.
-             */
             function showNextItem() {
                 currentIndex++;
                 
-                // If we reach the end of the list
                 if (currentIndex >= currentList.length) {
-                    currentIndex = 0; // Reset to the beginning
-                    // Re-shuffle sight words for the next round
+                    currentIndex = 0;
                     if (currentMode === 'sightWords') {
                         shuffle(currentList);
                     }
                     display.textContent = "Done!";
+                    prevDisplay.textContent = '';
+                    nextDisplay.textContent = '';
                     speakAndHighlight("Great job! Let's start again.");
                     setTimeout(() => {
-                         const currentItem = currentList[currentIndex];
-                         display.textContent = currentItem;
-                         speakAndHighlight(currentItem);
+                         showNextItem(); // This will now correctly display the first item
                     }, 2000);
                     return;
                 }
@@ -147,17 +140,28 @@
                 const currentItem = currentList[currentIndex];
                 display.textContent = currentItem;
                 speakAndHighlight(currentItem);
+
+                // Handle sequential display for letters and numbers
+                if (currentMode === 'letters' || currentMode === 'numbers') {
+                    // Special case for showing '0' before '1'
+                    if (currentMode === 'numbers' && currentIndex === 0) {
+                        prevDisplay.textContent = '0';
+                    } else {
+                        prevDisplay.textContent = currentIndex > 0 ? currentList[currentIndex - 1] : '';
+                    }
+                    nextDisplay.textContent = currentIndex < currentList.length - 1 ? currentList[currentIndex + 1] : '';
+                } else {
+                    // For sight words, ensure the side displays are empty
+                    prevDisplay.textContent = '';
+                    nextDisplay.textContent = '';
+                }
             }
 
-            /**
-             * Sets up and starts a learning mode.
-             * @param {string} mode - The selected mode ('letters', 'numbers', 'sightWords').
-             */
             function startMode(mode) {
                 currentMode = mode;
-                currentIndex = -1; // Reset index for the new list
+                currentIndex = -1;
                 isSessionActive = true;
-                nextButton.classList.remove('invisible'); // Show the next button
+                nextButton.classList.remove('invisible');
 
                 switch (mode) {
                     case 'letters':
@@ -167,46 +171,38 @@
                         currentList = numbers;
                         break;
                     case 'sightWords':
-                        currentList = [...sightWords]; // Use a shuffled copy
+                        currentList = [...sightWords];
                         shuffle(currentList);
                         break;
                 }
                 
-                // Show the first item immediately
                 showNextItem();
             }
 
             // --- EVENT LISTENERS ---
             
-            // Header buttons to start or switch modes
             lettersBtn.addEventListener('click', () => startMode('letters'));
             numbersBtn.addEventListener('click', () => startMode('numbers'));
             sightWordsBtn.addEventListener('click', () => startMode('sightWords'));
 
-            // "Next" button in the learning interface
             nextButton.addEventListener('click', showNextItem);
 
-            // Click the display to repeat the word or the initial prompt
             displayContainer.addEventListener('click', () => {
                 const currentText = display.textContent;
-                // Repeat the current item if a session is active
                 if (isSessionActive && currentText && currentList.includes(currentText)) {
                     speakAndHighlight(currentText);
                 } 
-                // Speak the initial prompt if no session is active
                 else if (!isSessionActive && currentText === 'Select a category') {
                     speakAndHighlight(currentText);
                 }
             });
 
-            // Add visual effect for button presses
             [nextButton, lettersBtn, numbersBtn, sightWordsBtn].forEach(button => {
                 button.addEventListener('mousedown', () => button.classList.add('btn-press'));
                 button.addEventListener('mouseup', () => button.classList.remove('btn-press'));
                 button.addEventListener('mouseleave', () => button.classList.remove('btn-press'));
             });
             
-            // Listen for spacebar key press for easier navigation
             document.addEventListener('keydown', (event) => {
                 if ((event.code === 'Space' || event.key === ' ') && isSessionActive) {
                     event.preventDefault();
@@ -220,7 +216,6 @@
                 }
             });
             
-            // Ensure voices are loaded
             window.speechSynthesis.getVoices();
         });
     </script>
