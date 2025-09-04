@@ -3,68 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn With Me: Sight Words, Letters & Numbers</title>
+    <title>Learn With Me: Interactive Learning App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Add canvas-confetti library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            touch-action: manipulation; /* Prevents double-tap zoom on mobile */
-            background-color: #111827; /* dark:bg-gray-900 */
-            color: #E5E7EB; /* dark:text-gray-200 */
+            touch-action: manipulation;
+            background-color: #111827;
+            color: #E5E7EB;
         }
-        /* The 'lit' class creates the highlight effect */
         .lit {
-            color: #FBBF24; /* amber-400 */
+            color: #FBBF24;
             transform: scale(1.1);
             text-shadow: 0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(251, 191, 36, 0.6);
         }
-        #display-container {
-            cursor: pointer; /* Indicates the display is clickable */
-            user-select: none; /* Prevents text selection on click */
-            background-color: #1F2937; /* dark:bg-gray-800 */
+        #display-container, #visual-container {
+            user-select: none;
+            background-color: #1F2937;
         }
         #display {
             transition: all 0.2s ease-in-out;
-            color: #D1D5DB; /* dark:text-gray-300 */
+            color: #D1D5DB;
         }
         #prevDisplay, #nextDisplay {
-            color: #4B5563; /* dark:text-gray-600 */
+            color: #4B5563;
         }
         .btn-press {
             transform: scale(0.95);
             transition: transform 0.1s ease-in-out;
         }
-        /* Style for the disabled button state */
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+        .bean {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            position: relative;
+        }
+        .bean-stack {
+            display: grid;
+            grid-template-columns: repeat(5, auto); /* Max 5 items per row */
+            gap: 8px; /* Spacing between beans */
+            justify-content: center;
+            padding: 8px;
+            margin: 8px;
+            min-width: 60px;
+            border: 1px solid #374151;
+            border-radius: 12px;
+        }
+        .bean-subtracted {
+            opacity: 0.4;
+            background-color: #6B7280 !important; /* gray-500 */
+        }
+        .bean-subtracted::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background-color: #111827; /* dark bg color */
+            transform: rotate(-15deg);
+            border-radius: 2px;
         }
     </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-4">
 
     <!-- Header with Mode Selection -->
-    <header class="w-full max-w-4xl mb-6">
-        <div class="grid grid-cols-3 gap-2 md:gap-4">
-            <button id="lettersBtn" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 md:py-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-sky-300 transition-all duration-200 ease-in-out">Abc</button>
-            <button id="numbersBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 md:py-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 transition-all duration-200 ease-in-out">123</button>
-            <button id="sightWordsBtn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 md:py-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-300 transition-all duration-200 ease-in-out">Words</button>
+    <header class="w-full max-w-4xl mb-4">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+            <button id="lettersBtn" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-sky-300 transition-transform duration-200 ease-in-out">Abc</button>
+            <button id="numbersBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 transition-transform duration-200 ease-in-out">123</button>
+            <button id="sightWordsBtn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-300 transition-transform duration-200 ease-in-out">Words</button>
+            <button id="additionBtn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-rose-300 transition-transform duration-200 ease-in-out">+</button>
+            <button id="subtractionBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-transform duration-200 ease-in-out">-</button>
+            <button id="multiplicationBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-xl text-lg md:text-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 transition-transform duration-200 ease-in-out">x</button>
         </div>
     </header>
 
     <!-- Main Learning Interface -->
     <div class="w-full max-w-4xl text-center">
-        <!-- Main display area for the word/number/letter -->
-        <div id="display-container" class="rounded-2xl shadow-2xl p-4 md:p-8 flex items-center justify-around" style="min-height: 250px;">
+        <div id="display-container" class="rounded-2xl shadow-2xl p-4 md:p-8 flex items-center justify-around cursor-pointer" style="min-height: 200px;">
             <h1 id="prevDisplay" class="w-1/4 text-4xl md:text-6xl font-bold tracking-wider"></h1>
             <h1 id="display" class="w-1/2 text-5xl md:text-8xl font-black tracking-wider">Select a category</h1>
             <h1 id="nextDisplay" class="w-1/4 text-4xl md:text-6xl font-bold tracking-wider"></h1>
         </div>
+        
+        <div id="visual-container" class="mt-4 rounded-2xl shadow-lg p-4 flex flex-wrap justify-center items-center" style="min-height: 100px; display: none;"></div>
 
-        <!-- Control button container -->
         <div class="mt-6 flex justify-end">
              <button id="nextButton" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 rounded-xl text-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-green-800 transition-all duration-200 ease-in-out invisible">
                 Next
@@ -74,51 +106,48 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- UI ELEMENTS ---
-            const display = document.getElementById('display');
-            const prevDisplay = document.getElementById('prevDisplay');
-            const nextDisplay = document.getElementById('nextDisplay');
-            const displayContainer = document.getElementById('display-container');
-            const nextButton = document.getElementById('nextButton');
-            const lettersBtn = document.getElementById('lettersBtn');
-            const numbersBtn = document.getElementById('numbersBtn');
-            const sightWordsBtn = document.getElementById('sightWordsBtn');
+            const elements = {
+                display: document.getElementById('display'),
+                prevDisplay: document.getElementById('prevDisplay'),
+                nextDisplay: document.getElementById('nextDisplay'),
+                displayContainer: document.getElementById('display-container'),
+                visualContainer: document.getElementById('visual-container'),
+                nextButton: document.getElementById('nextButton'),
+                buttons: {
+                    letters: document.getElementById('lettersBtn'),
+                    numbers: document.getElementById('numbersBtn'),
+                    sightWords: document.getElementById('sightWordsBtn'),
+                    addition: document.getElementById('additionBtn'),
+                    subtraction: document.getElementById('subtractionBtn'),
+                    multiplication: document.getElementById('multiplicationBtn'),
+                }
+            };
 
-            // --- DATA ---
-            const numbers = Array.from({ length: 30 }, (_, i) => (i + 1).toString());
-            const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i) + String.fromCharCode(97 + i));
-            const sightWords = [
-                'after', 'again', 'an', 'any', 'as', 'ask', 'by', 'could', 'every', 'fly',
-                'from', 'give', 'going', 'had', 'has', 'her', 'him', 'his', 'how', 'just',
-                'know', 'let', 'live', 'may', 'of', 'old', 'once', 'open', 'over', 'put',
-                'round', 'some', 'stop', 'take', 'thank', 'them', 'then', 'think', 'walk',
-                'were', 'when', 'a', 'about', 'all', 'am', 'and', 'are', 'at', 'ate', 'away',
-                'be', 'big', 'black', 'blue', 'brown', 'but', 'came', 'can', 'come', 'did',
-                'do', 'down', 'eat', 'eight', 'find', 'first', 'five', 'for', 'four', 'funny',
-                'get', 'go', 'good', 'green', 'he', 'help', 'here', 'I', 'in', 'into', 'is',
-                'it', 'jump', 'little', 'look', 'make', 'me', 'my', 'new', 'no', 'not', 'one',
-                'orange', 'play', 'purple', 'ran', 'red', 'run', 'said', 'saw', 'see', 'seven',
-                'she', 'six', 'so', 'ten', 'that', 'the', 'there', 'they', 'this', 'three',
-                'to', 'too', 'two', 'up', 'we', 'went', 'what', 'where', 'white', 'who',
-                'will', 'with', 'yellow', 'yes', 'you'
-            ];
+            const data = {
+                numbers: Array.from({ length: 30 }, (_, i) => (i + 1).toString()),
+                letters: Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i) + String.fromCharCode(97 + i)),
+                sightWords: ['after', 'again', 'an', 'any', 'as', 'ask', 'by', 'could', 'every', 'fly', 'from', 'give', 'going', 'had', 'has', 'her', 'him', 'his', 'how', 'just', 'know', 'let', 'live', 'may', 'of', 'old', 'once', 'open', 'over', 'put', 'round', 'some', 'stop', 'take', 'thank', 'them', 'then', 'think', 'walk', 'were', 'when', 'a', 'about', 'all', 'am', 'and', 'are', 'at', 'ate', 'away', 'be', 'big', 'black', 'blue', 'brown', 'but', 'came', 'can', 'come', 'did', 'do', 'down', 'eat', 'eight', 'find', 'first', 'five', 'for', 'four', 'funny', 'get', 'go', 'good', 'green', 'he', 'help', 'here', 'I', 'in', 'into', 'is', 'it', 'jump', 'little', 'look', 'make', 'me', 'my', 'new', 'no', 'not', 'one', 'orange', 'play', 'purple', 'ran', 'red', 'run', 'said', 'saw', 'see', 'seven', 'she', 'six', 'so', 'ten', 'that', 'the', 'there', 'they', 'this', 'three', 'to', 'too', 'two', 'up', 'we', 'went', 'what', 'where', 'white', 'who', 'will', 'with', 'yellow', 'yes', 'you']
+            };
 
-            // --- STATE ---
-            let currentList = [];
-            let currentIndex = -1;
-            let currentMode = '';
-            let isSessionActive = false;
-            let isSessionComplete = false; // New state to track completion
-            let currentUtterance = null; 
+            let state = {
+                currentList: [],
+                currentIndex: -1,
+                currentMode: '',
+                isSessionActive: false,
+                isSessionComplete: false,
+                currentUtterance: null,
+                currentMathProblem: null,
+                isAnswerShown: false,
+                loopCounter: 0,
+            };
 
-            // --- FUNCTIONS ---
+            const modes = ['letters', 'numbers', 'sightWords', 'addition', 'subtraction', 'multiplication'];
+            const modeNames = { letters: 'Abc', numbers: '123', sightWords: 'Words', addition: '+', subtraction: '-', multiplication: 'x' };
+            const beanColors = ['#EF4444', '#3B82F6', '#EAB308', '#8B5CF6', '#EC4899'];
+            const answerColor = '#22C55E';
 
             function celebrate() {
-                confetti({
-                    particleCount: 150,
-                    spread: 90,
-                    origin: { y: 0.6 }
-                });
+                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
             }
 
             function shuffle(array) {
@@ -128,146 +157,246 @@
                 }
             }
             
-            function speakAndHighlight(text) {
+            function speakAndHighlight(text, highlight = true) {
                 let textToSpeak = text;
-                if (text.length === 2 && text.charAt(0) >= 'A' && text.charAt(0) <= 'Z') {
+                 if (typeof text === 'string' && text.length === 2 && text.charAt(0) >= 'A' && text.charAt(0) <= 'Z') {
                     textToSpeak = text.charAt(0);
+                } else if (state.currentMathProblem) {
+                     textToSpeak = text.replace('x', 'times').replace('-', 'minus').replace('+', 'plus');
                 }
 
                 window.speechSynthesis.cancel();
-                currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
-                currentUtterance.rate = 0.9;
-                currentUtterance.pitch = 1.1;
+                state.currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+                state.currentUtterance.rate = 0.9;
+                state.currentUtterance.pitch = 1.1;
 
-                currentUtterance.onstart = () => display.classList.add('lit');
-                currentUtterance.onend = () => display.classList.remove('lit');
-                currentUtterance.onerror = (event) => {
-                    console.error("Speech synthesis error:", event.error);
-                    display.classList.remove('lit');
+                state.currentUtterance.onstart = () => { if(highlight) elements.display.classList.add('lit'); };
+                state.currentUtterance.onend = () => elements.display.classList.remove('lit');
+                state.currentUtterance.onerror = (e) => {
+                    console.error("Speech synthesis error:", e.error);
+                    elements.display.classList.remove('lit');
                 };
                 
-                window.speechSynthesis.speak(currentUtterance);
+                window.speechSynthesis.speak(state.currentUtterance);
+            }
+
+            function generateMathProblem() {
+                let num1, num2, answer, operator;
+                switch (state.currentMode) {
+                    case 'addition':
+                        num1 = Math.floor(Math.random() * 19) + 1;
+                        num2 = Math.floor(Math.random() * (20 - num1)) + 1;
+                        answer = num1 + num2;
+                        operator = '+';
+                        break;
+                    case 'subtraction':
+                        num1 = Math.floor(Math.random() * 19) + 2;
+                        num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                        answer = num1 - num2;
+                        operator = '-';
+                        break;
+                    case 'multiplication':
+                        num1 = Math.floor(Math.random() * 11);
+                        num2 = Math.floor(Math.random() * 11);
+                        answer = num1 * num2;
+                        operator = 'x';
+                        break;
+                }
+                return { num1, num2, answer, operator };
+            }
+
+            function renderVisuals(problem) {
+                const { num1, num2, operator } = problem;
+                elements.visualContainer.innerHTML = '';
+                elements.visualContainer.style.display = 'flex';
+                const color1 = beanColors[Math.floor(Math.random()*beanColors.length)];
+                let color2 = beanColors[Math.floor(Math.random()*beanColors.length)];
+                while(color1 === color2) color2 = beanColors[Math.floor(Math.random()*beanColors.length)];
+
+                switch (operator) {
+                    case '+':
+                        elements.visualContainer.appendChild(createBeanStack(num1, color1));
+                        elements.visualContainer.appendChild(createBeanStack(num2, color2));
+                        break;
+                    case '-':
+                        elements.visualContainer.appendChild(createBeanStack(num1, color1));
+                        break;
+                    case 'x':
+                        for (let i = 0; i < num1; i++) {
+                            elements.visualContainer.appendChild(createBeanStack(num2, beanColors[i % beanColors.length]));
+                        }
+                        break;
+                }
+            }
+            
+            function updateVisualsForAnswer() {
+                const problem = state.currentMathProblem;
+                const beans = Array.from(elements.visualContainer.querySelectorAll('.bean'));
+
+                if (problem.operator === '-') {
+                    const beansToSubtract = beans.slice(-problem.num2);
+                    beansToSubtract.forEach(bean => bean.classList.add('bean-subtracted'));
+                    
+                    const answerBeans = beans.slice(0, problem.answer);
+                    answerBeans.forEach(bean => bean.style.backgroundColor = answerColor);
+                } else {
+                     beans.forEach(bean => {
+                        bean.style.backgroundColor = answerColor;
+                    });
+                }
+            }
+
+            function createBeanStack(count, color) {
+                const stack = document.createElement('div');
+                stack.className = 'bean-stack';
+                for (let i = 0; i < count; i++) {
+                    const bean = document.createElement('div');
+                    bean.className = 'bean';
+                    bean.style.backgroundColor = color;
+                    stack.appendChild(bean);
+                }
+                return stack;
             }
 
             function showNextItem() {
-                // If the session was just completed, clicking "Next" starts the next category
-                if (isSessionComplete) {
-                    const modes = ['letters', 'numbers', 'sightWords'];
-                    const currentModeIndex = modes.indexOf(currentMode);
+                if (state.isSessionComplete) {
+                    const currentModeIndex = modes.indexOf(state.currentMode);
                     const nextMode = modes[(currentModeIndex + 1) % modes.length];
                     startMode(nextMode);
                     return;
                 }
-
-                nextButton.disabled = true;
-                setTimeout(() => {
-                    nextButton.disabled = false;
-                }, 1000);
-
-                currentIndex++;
                 
-                // Check if we've completed the list
-                if (currentIndex >= currentList.length) {
-                    isSessionComplete = true;
-                    celebrate();
-                    display.textContent = "Great Job!";
-                    prevDisplay.textContent = '';
-                    nextDisplay.textContent = '';
-                    speakAndHighlight("Great job!");
-                    
-                    // Set up the button for the next category
-                    const modes = ['letters', 'numbers', 'sightWords'];
-                    const modeNames = { 'letters': 'Abc', 'numbers': '123', 'sightWords': 'Words' };
-                    const currentModeIndex = modes.indexOf(currentMode);
-                    const nextModeKey = modes[(currentModeIndex + 1) % modes.length];
-                    
-                    nextButton.textContent = `Next: ${modeNames[nextModeKey]}`;
-                    nextButton.disabled = false; // Re-enable immediately
+                if (modes.slice(3).includes(state.currentMode)) {
+                    if (state.isAnswerShown) {
+                        state.loopCounter++;
+                        if (state.loopCounter >= 10) {
+                           handleSessionCompletion();
+                           return;
+                        }
+                        state.currentMathProblem = generateMathProblem();
+                        elements.display.textContent = `${state.currentMathProblem.num1} ${state.currentMathProblem.operator} ${state.currentMathProblem.num2} = ?`;
+                        renderVisuals(state.currentMathProblem);
+                        elements.nextButton.textContent = 'Show Answer';
+                        state.isAnswerShown = false;
+                        speakAndHighlight(`${state.currentMathProblem.num1} ${state.currentMathProblem.operator} ${state.currentMathProblem.num2}`, false);
+                    } else {
+                        elements.display.textContent = `${state.currentMathProblem.num1} ${state.currentMathProblem.operator} ${state.currentMathProblem.num2} = ${state.currentMathProblem.answer}`;
+                        updateVisualsForAnswer();
+                        speakAndHighlight(elements.display.textContent);
+                        elements.nextButton.textContent = (state.loopCounter === 9) ? 'Complete' : 'Next';
+                        state.isAnswerShown = true;
+                    }
                     return;
                 }
 
-                const currentItem = currentList[currentIndex];
-                display.textContent = currentItem;
-                speakAndHighlight(currentItem);
+                elements.nextButton.disabled = true;
+                setTimeout(() => { elements.nextButton.disabled = false; }, 1000);
 
-                if (currentMode === 'letters' || currentMode === 'numbers') {
-                    if (currentMode === 'numbers' && currentIndex === 0) {
-                        prevDisplay.textContent = '0';
-                    } else {
-                        prevDisplay.textContent = currentIndex > 0 ? currentList[currentIndex - 1] : '';
-                    }
-                    nextDisplay.textContent = currentIndex < currentList.length - 1 ? currentList[currentIndex + 1] : '';
-                } else {
-                    prevDisplay.textContent = '';
-                    nextDisplay.textContent = '';
+                state.currentIndex++;
+                
+                if (state.currentIndex >= state.currentList.length) {
+                    handleSessionCompletion();
+                    return;
                 }
 
-                // Update button text if it's the last item
-                if (currentIndex === currentList.length - 1) {
-                    nextButton.textContent = 'Complete';
+                const currentItem = state.currentList[state.currentIndex];
+                elements.display.textContent = currentItem;
+                speakAndHighlight(currentItem);
+                
+                updateSequentialDisplays();
+
+                elements.nextButton.textContent = (state.currentIndex === state.currentList.length - 1) ? 'Complete' : 'Next';
+            }
+            
+            function handleSessionCompletion() {
+                state.isSessionComplete = true;
+                celebrate();
+                elements.display.textContent = "Great Job!";
+                elements.prevDisplay.textContent = '';
+                elements.nextDisplay.textContent = '';
+                elements.visualContainer.style.display = 'none';
+                speakAndHighlight("Great job!");
+                
+                const currentModeIndex = modes.indexOf(state.currentMode);
+                const nextModeKey = modes[(currentModeIndex + 1) % modes.length];
+                
+                elements.nextButton.textContent = `Next: ${modeNames[nextModeKey]}`;
+                elements.nextButton.disabled = false;
+            }
+
+            function updateSequentialDisplays() {
+                 if (state.currentMode === 'letters' || state.currentMode === 'numbers') {
+                    if (state.currentMode === 'numbers' && state.currentIndex === 0) {
+                        elements.prevDisplay.textContent = '0';
+                    } else {
+                        elements.prevDisplay.textContent = state.currentIndex > 0 ? state.currentList[state.currentIndex - 1] : '';
+                    }
+                    elements.nextDisplay.textContent = state.currentIndex < state.currentList.length - 1 ? state.currentList[state.currentIndex + 1] : '';
                 } else {
-                    nextButton.textContent = 'Next';
+                    elements.prevDisplay.textContent = '';
+                    elements.nextDisplay.textContent = '';
                 }
             }
 
             function startMode(mode) {
-                currentMode = mode;
-                currentIndex = -1;
-                isSessionActive = true;
-                isSessionComplete = false; // Reset completion state
-                nextButton.classList.remove('invisible');
-                nextButton.textContent = 'Next'; // Ensure button text is correct
+                Object.assign(state, {
+                    currentMode: mode,
+                    currentIndex: -1,
+                    isSessionActive: true,
+                    isSessionComplete: false,
+                    isAnswerShown: false,
+                    loopCounter: 0,
+                });
+                elements.nextButton.classList.remove('invisible');
 
-                switch (mode) {
-                    case 'letters':
-                        currentList = letters;
-                        break;
-                    case 'numbers':
-                        currentList = numbers;
-                        break;
-                    case 'sightWords':
-                        currentList = [...sightWords];
-                        shuffle(currentList);
-                        break;
+                elements.prevDisplay.textContent = '';
+                elements.nextDisplay.textContent = '';
+
+                if (modes.slice(3).includes(mode)) { 
+                    elements.visualContainer.style.display = 'flex';
+                    state.isAnswerShown = true; 
+                } else { 
+                    elements.visualContainer.style.display = 'none';
+                    switch (mode) {
+                        case 'letters': state.currentList = data.letters; break;
+                        case 'numbers': state.currentList = data.numbers; break;
+                        case 'sightWords': state.currentList = [...data.sightWords]; shuffle(state.currentList); break;
+                    }
                 }
                 
                 showNextItem();
             }
 
-            // --- EVENT LISTENERS ---
-            
-            lettersBtn.addEventListener('click', () => startMode('letters'));
-            numbersBtn.addEventListener('click', () => startMode('numbers'));
-            sightWordsBtn.addEventListener('click', () => startMode('sightWords'));
-            nextButton.addEventListener('click', showNextItem);
+            Object.keys(elements.buttons).forEach(key => {
+                elements.buttons[key].addEventListener('click', () => startMode(key));
+            });
 
-            displayContainer.addEventListener('click', () => {
-                const currentText = display.textContent;
-                if (isSessionActive && currentText && currentList.includes(currentText)) {
+            elements.nextButton.addEventListener('click', showNextItem);
+
+            elements.displayContainer.addEventListener('click', () => {
+                const currentText = elements.display.textContent;
+                if (!state.isSessionActive && currentText === 'Select a category') {
                     speakAndHighlight(currentText);
-                } 
-                else if (!isSessionActive && currentText === 'Select a category') {
-                    speakAndHighlight(currentText);
+                } else if(state.isSessionActive && !modes.slice(3).includes(state.currentMode)) {
+                     if (currentText && state.currentList.includes(currentText)) speakAndHighlight(currentText);
                 }
             });
 
-            [nextButton, lettersBtn, numbersBtn, sightWordsBtn].forEach(button => {
+            [...Object.values(elements.buttons), elements.nextButton].forEach(button => {
                 button.addEventListener('mousedown', () => button.classList.add('btn-press'));
                 button.addEventListener('mouseup', () => button.classList.remove('btn-press'));
                 button.addEventListener('mouseleave', () => button.classList.remove('btn-press'));
             });
             
-            document.addEventListener('keydown', (event) => {
-                if ((event.code === 'Space' || event.key === ' ') && isSessionActive && !nextButton.disabled) {
-                    event.preventDefault();
-                    nextButton.click();
-                    nextButton.classList.add('btn-press');
+            document.addEventListener('keydown', (e) => {
+                if ((e.code === 'Space' || e.key === ' ') && state.isSessionActive && !elements.nextButton.disabled) {
+                    e.preventDefault();
+                    elements.nextButton.click();
+                    elements.nextButton.classList.add('btn-press');
                 }
             });
-            document.addEventListener('keyup', (event) => {
-                if (event.code === 'Space' || event.key === ' ') {
-                    nextButton.classList.remove('btn-press');
-                }
+            document.addEventListener('keyup', (e) => {
+                if (e.code === 'Space' || e.key === ' ') elements.nextButton.classList.remove('btn-press');
             });
             
             window.speechSynthesis.getVoices();
@@ -275,3 +404,5 @@
     </script>
 </body>
 </html>
+
+
