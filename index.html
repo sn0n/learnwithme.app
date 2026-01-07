@@ -30,6 +30,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Learn With Me">
+    <link rel="manifest" href="/manifest.json">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
@@ -98,6 +99,56 @@
             transform: rotate(-15deg);
             border-radius: 2px;
         }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1F2937;
+            color: #E5E7EB;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            max-width: 90%;
+            animation: slideUp 0.3s ease-out;
+        }
+        .notification.show {
+            display: block;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+        #installBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            display: none;
+        }
+        #installBtn.show {
+            display: block;
+        }
+        .version-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(31, 41, 55, 0.8);
+            color: #9CA3AF;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            z-index: 998;
+            backdrop-filter: blur(4px);
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-4">
@@ -130,6 +181,26 @@
             </button>
         </div>
     </main>
+
+    <!-- Version Badge -->
+    <div class="version-badge" id="versionBadge" aria-label="App version">
+        v1.0.1
+    </div>
+
+    <!-- Install Button -->
+    <button id="installBtn" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-200 ease-in-out" aria-label="Install Learn With Me app">
+        📱 Install App
+    </button>
+
+    <!-- Update Notification -->
+    <div id="updateNotification" class="notification" role="alert" aria-live="polite">
+        <div class="flex items-center justify-between gap-4">
+            <span id="updateMessage">A new version is available!</span>
+            <button id="updateBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition-colors">
+                Update Now
+            </button>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -496,31 +567,159 @@
             }
         });
 
+        // PWA Installation and Service Worker Management
+        let deferredPrompt;
+        let swRegistration = null;
+        const APP_VERSION = '1.0.1';
+
         // Register Service Worker for offline functionality
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then((registration) => {
-                        console.log('Service Worker registered successfully:', registration.scope);
+            window.addEventListener('load', async () => {
+                try {
+                    swRegistration = await navigator.serviceWorker.register('/sw.js');
+                    console.log('Service Worker registered successfully:', swRegistration.scope);
 
-                        // Check for updates periodically
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            console.log('Service Worker update found');
+                    // Check for updates periodically (every 60 seconds)
+                    setInterval(() => {
+                        swRegistration.update();
+                    }, 60000);
 
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('New Service Worker available');
-                                    // Optionally notify user about update
-                                }
-                            });
+                    // Listen for updates
+                    swRegistration.addEventListener('updatefound', () => {
+                        const newWorker = swRegistration.installing;
+                        console.log('Service Worker update found');
+
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('New Service Worker available');
+                                showUpdateNotification();
+                            }
                         });
-                    })
-                    .catch((error) => {
-                        console.error('Service Worker registration failed:', error);
                     });
+
+                    // Listen for service worker messages
+                    navigator.serviceWorker.addEventListener('message', (event) => {
+                        if (event.data.type === 'SW_ACTIVATED') {
+                            console.log(`Service Worker activated: v${event.data.version}`);
+                            updateVersionDisplay(event.data.version);
+                        }
+                    });
+
+                    // Get current SW version
+                    if (navigator.serviceWorker.controller) {
+                        const messageChannel = new MessageChannel();
+                        messageChannel.port1.onmessage = (event) => {
+                            if (event.data.version) {
+                                updateVersionDisplay(event.data.version);
+                            }
+                        };
+                        navigator.serviceWorker.controller.postMessage(
+                            { type: 'GET_VERSION' },
+                            [messageChannel.port2]
+                        );
+                    }
+                } catch (error) {
+                    console.error('Service Worker registration failed:', error);
+                }
             });
         }
+
+        // PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallButton();
+        });
+
+        function showInstallButton() {
+            const installBtn = document.getElementById('installBtn');
+            installBtn.classList.add('show');
+            installBtn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to install prompt: ${outcome}`);
+
+                if (outcome === 'accepted') {
+                    hideInstallButton();
+                }
+                deferredPrompt = null;
+            });
+        }
+
+        function hideInstallButton() {
+            const installBtn = document.getElementById('installBtn');
+            installBtn.classList.remove('show');
+        }
+
+        // Handle app installed event
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            hideInstallButton();
+            showNotification('App installed successfully! 🎉', 3000);
+        });
+
+        // Update Notification
+        function showUpdateNotification() {
+            const notification = document.getElementById('updateNotification');
+            notification.classList.add('show');
+
+            const updateBtn = document.getElementById('updateBtn');
+            updateBtn.onclick = () => {
+                if (swRegistration && swRegistration.waiting) {
+                    swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                }
+            };
+        }
+
+        function hideUpdateNotification() {
+            const notification = document.getElementById('updateNotification');
+            notification.classList.remove('show');
+        }
+
+        // Generic notification function
+        function showNotification(message, duration = 5000) {
+            const notification = document.getElementById('updateNotification');
+            const messageEl = document.getElementById('updateMessage');
+            const updateBtn = document.getElementById('updateBtn');
+
+            messageEl.textContent = message;
+            updateBtn.style.display = 'none';
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                updateBtn.style.display = 'block';
+            }, duration);
+        }
+
+        // Version Display
+        function updateVersionDisplay(version) {
+            const versionBadge = document.getElementById('versionBadge');
+            versionBadge.textContent = `v${version}`;
+        }
+
+        // Check version on visibility change (when user returns to tab)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && swRegistration) {
+                swRegistration.update();
+            }
+        });
+
+        // Check for updates when online
+        window.addEventListener('online', () => {
+            if (swRegistration) {
+                swRegistration.update();
+                showNotification('Back online! Checking for updates...', 2000);
+            }
+        });
+
+        // Offline notification
+        window.addEventListener('offline', () => {
+            showNotification('You are offline. App will work with cached content.', 3000);
+        });
     </script>
 </body>
 </html>
