@@ -1,0 +1,30 @@
+{
+  "numbers": [
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+    "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+    "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"
+  ],
+  "letters": [
+    "Aa", "Bb", "Cc", "Dd", "Ee", "Ff", "Gg", "Hh", "Ii", "Jj",
+    "Kk", "Ll", "Mm", "Nn", "Oo", "Pp", "Qq", "Rr", "Ss", "Tt",
+    "Uu", "Vv", "Ww", "Xx", "Yy", "Zz"
+  ],
+  "sightWords": [
+    "after", "again", "an", "any", "as", "ask", "by", "could", "every", "fly",
+    "from", "give", "going", "had", "has", "her", "him", "his", "how", "just",
+    "know", "let", "live", "may", "of", "old", "once", "open", "over", "put",
+    "round", "some", "stop", "take", "thank", "them", "then", "think", "walk", "were",
+    "when", "a", "about", "all", "am", "and", "are", "at", "ate", "away",
+    "be", "big", "black", "blue", "brown", "but", "came", "can", "come", "did",
+    "do", "down", "eat", "eight", "find", "first", "five", "for", "four", "funny",
+    "get", "go", "good", "green", "he", "help", "here", "I", "in", "into",
+    "is", "it", "jump", "little", "look", "make", "me", "my", "new", "no",
+    "not", "one", "orange", "play", "purple", "ran", "red", "run", "said", "saw",
+    "see", "seven", "she", "six", "so", "ten", "that", "the", "there", "they",
+    "this", "three", "to", "too", "two", "up", "we", "went", "what", "where",
+    "white", "who", "will", "with", "yellow", "yes", "you"
+  ],
+  "beanColors": ["#EF4444", "#3B82F6", "#EAB308", "#8B5CF6", "#EC4899"],
+  "answerColor": "#22C55E",
+  "weightedFactors": [2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1]
+}
